@@ -38,10 +38,8 @@ public class Git {
     
     public static String hashFile(String filePath) {
         File testFile = new File(filePath);
-        if (!testFile.exists()) {
-            throw new IllegalArgumentException("No such file exists.");
-        }
-        try {
+        if (testFile.exists()) {
+            try {
             byte[] bytes = Files.readAllBytes(Paths.get(filePath));
 
             String content = new String(bytes, StandardCharsets.UTF_8);
@@ -65,10 +63,17 @@ public class Git {
             System.err.println(e);
             return null;
         }
+        }
+        else {
+            return null;
+        }
     }
     
     public static void createBLOB(String filePath) {
         String fileName = hashFile(filePath);
+        if (fileName == null) {
+            System.err.println("Said file does not exist.");
+        }
         String path = "git/objects/" + fileName;
         if (!Files.exists(Paths.get(path))) {
             try {
