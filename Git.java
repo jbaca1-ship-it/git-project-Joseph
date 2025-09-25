@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 public class Git {
     public static void main(String[] args) {
         initializeRepo();
+        createBLOB("nukes.txt");
     }
 
     public static void initializeRepo() {
@@ -61,8 +62,25 @@ public class Git {
             }
             return hashedString.toString();
         } catch (IOException | NoSuchAlgorithmException e) {
-            System.out.println("Cannot read from path.");
+            System.err.println(e);
             return null;
-        } 
+        }
+    }
+    
+    public static void createBLOB(String filePath) {
+        String fileName = hashFile(filePath);
+        String path = "git/objects/" + fileName;
+        if (!Files.exists(Paths.get(path))) {
+            try {
+            String data = new String(Files.readAllBytes(Paths.get(filePath)));
+            Files.createFile(Paths.get("git/objects/" + fileName));
+            Files.write(Paths.get("git/objects/"+fileName), data.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        if (!Files.exists(Paths.get(path))) {
+            System.err.println("BLOB creation failed.");
+        }
+        }
     }
 }
