@@ -104,4 +104,24 @@ public class Git {
             System.err.println("Repository not initialized.\nHow exactly did this happen?\n\nlol");
         }
     }
+
+    public static void robustReset() {
+        // so this literally killed the last branch I made... so... let's make some changes
+        File projectDir = new File(".");
+        removeAllContents(projectDir);
+    }
+    
+    private static void removeAllContents(File dir) {
+        File[] filesList = dir.listFiles();
+        for (File f : filesList) {
+            if (!f.getName().contains(".java")) {
+                if (f.isDirectory()) {
+                    removeAllContents(f);
+                }
+                else {
+                    f.delete();
+                }
+            }
+        }
+    }
 }

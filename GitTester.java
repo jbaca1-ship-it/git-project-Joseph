@@ -83,6 +83,7 @@ public class GitTester {
         } catch (Exception e) {
             System.err.println(e);
         }
+        Git.initializeRepo();
         cleanUp();
         Git.initializeRepo();
         verifyInitialization();
