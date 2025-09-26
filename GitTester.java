@@ -6,33 +6,9 @@ import java.nio.file.Paths;
 
 public class GitTester {
     public static void main(String[] args) {
-        // File testFile = new File("test.txt");
-        // try {
-        //     testFile.createNewFile();
-        //     } catch (Exception e) {
-        //     System.err.println(e);
-        //     }
-        //     for (int i = 0; i < 10; i++) {
-        //         Git.initializeRepo();
-        //         verifyInitialization();
-        //         Git.createBLOB("test.txt");
-        //         cleanUp();
-        //     }
-        // testFile.delete();
-        // cleanUp();
-        // Git.initializeRepo();
-        // File testFile = new File("test2.txt");
-        // try {
-            // testFile.createNewFile();
-            // Files.write(Paths.get("test2.txt"), "There is an imposter among us too".getBytes(StandardCharsets.UTF_8));
-        // } catch (Exception e) {
-        //     System.err.println(e);
-        // }
-        // Git.updateIndex("test.txt");
-        // Git.updateIndex("test2.txt");
-        // Git.updateIndex("test3.txt");
         comprehensiveTest();
         Git.robustReset();
+        cleanUp();
     }
     
     public static void verifyInitialization() {

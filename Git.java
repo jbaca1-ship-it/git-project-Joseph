@@ -39,7 +39,6 @@ public class Git {
         if (testFile.exists()) {
             try {
             byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-
             String content = new String(bytes, StandardCharsets.UTF_8);
             if (!content.isEmpty() && content.charAt(0) == '\uFEFF') {
                 content = content.substring(1);

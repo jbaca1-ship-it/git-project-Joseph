@@ -10,7 +10,7 @@ These files are only created if they do not currently exist.
 In the case that everything necessary for initialization already exists, initializeRepo() will sysout a message stating that the repository already exists.
 
 String hashFile(String filePath)
-This method hashes the contents of the file associated with the path provided to it. It then returns the hashed value of these contents as a string. The SHA-1 hash from MessageDigest is employed to execute the hashing.
+This method hashes the contents of the file associated with the path provided to it. It then returns the hashed value of these contents as a string. The SHA-1 hash from MessageDigest is employed to execute the hashing. Credit to Alexander Obregon for starter code (https://medium.com/@AlexanderObregon/what-is-sha-256-hashing-in-java-0d46dfb83888).
 
 void createBlob(String fileName)
 This method, given the String name of a file as a parameter, converts it into a BLOB which is stored in git/objects. The name of this BLOB is the hash of the file's contents. The hashing is performed with hashFile(String filePath). If the BLOB already exists, the method will do nothing. If the method has failed to create the BLOB, it will output a message that says so.
@@ -22,7 +22,7 @@ void robustReset()
 This method calls the recursive function removeAllContents to delete anything in the project root that is not part of the git project or hidden.
 
 void removeAllContents(File dir)
-A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden.
+A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden. Credit to rich and Peter Mortensen for starter code (https://stackoverflow.com/questions/1844688/how-can-i-read-all-files-in-a-folder-from-java).
 
 GitTester.java
 The main method runs Git.initializeRepo(), verifyInstallation(), and cleanUp() ten times in a row. This shows that Git.initializeRepo() can run consistently.
