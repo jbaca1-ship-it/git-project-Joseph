@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,6 +32,7 @@ public class GitTester {
         // Git.updateIndex("test2.txt");
         // Git.updateIndex("test3.txt");
         comprehensiveTest();
+        Git.robustReset();
     }
     
     public static void verifyInitialization() {
@@ -83,6 +83,7 @@ public class GitTester {
         } catch (Exception e) {
             System.err.println(e);
         }
+        Git.initializeRepo();
         cleanUp();
         Git.initializeRepo();
         verifyInitialization();

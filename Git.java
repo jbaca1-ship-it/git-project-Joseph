@@ -104,4 +104,23 @@ public class Git {
             System.err.println("Repository not initialized.\nHow exactly did this happen?\n\nlol");
         }
     }
+
+    public static void robustReset() {
+        File projectDir = new File(".");
+        removeAllContents(projectDir);
+    }
+    
+    private static void removeAllContents(File dir) {
+        File[] filesList = dir.listFiles();
+        for (File f : filesList) {
+            if (!f.getName().contains(".java")&&f.getName().charAt(0)!='.'&&!f.getName().equals("README.md")) {
+                if (f.isDirectory()) {
+                    removeAllContents(f);
+                }
+                else {
+                    f.delete();
+                }
+            }
+        }
+    }
 }
