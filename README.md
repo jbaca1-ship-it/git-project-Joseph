@@ -19,7 +19,10 @@ void updateIndex(String fileName)
 This method, given the String name of a file as a parameter, adds its hash and name to the "index" file located within the "git" directory. It assumes that fileName accurately names an existing file. If no such file exists, it will update "index" with a null BLOB. If the repository has not been initialized, this method will return an error message and not run.
 
 void robustReset()
-EXPLANATION GOES HERE
+This method calls the recursive function removeAllContents to delete anything in the project root that is not part of the git project or hidden.
+
+void removeAllContents(File dir)
+A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden.
 
 GitTester.java
 The main method runs Git.initializeRepo(), verifyInstallation(), and cleanUp() ten times in a row. This shows that Git.initializeRepo() can run consistently.
