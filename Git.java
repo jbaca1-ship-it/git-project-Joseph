@@ -8,8 +8,6 @@ import java.security.NoSuchAlgorithmException;
 
 public class Git {
     public static void main(String[] args) {
-        initializeRepo();
-        createBLOB("nukes.txt");
     }
 
     public static void initializeRepo() {
@@ -86,6 +84,24 @@ public class Git {
         if (!Files.exists(Paths.get(path))) {
             System.err.println("BLOB creation failed.");
         }
+        }
+    }
+
+    public static void updateIndex(String fileName){
+        if (Files.exists(Paths.get("git/index"))) {
+            String hash = hashFile(fileName);
+            try {
+                String contents = Files.readString(Paths.get("git/index"));
+                if (!contents.isEmpty()) {
+                    contents += "\n";
+                }
+                Files.write(Paths.get("git/index"), (contents+hash+" "+fileName).getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            System.err.println("Repository not initialized.\nHow exactly did this happen?\n\nlol");
         }
     }
 }

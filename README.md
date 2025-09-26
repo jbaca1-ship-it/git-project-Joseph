@@ -15,6 +15,9 @@ This method hashes the contents of the file associated with the path provided to
 void createBlob(String fileName)
 This method, given the String name of a file as a parameter, converts it into a BLOB which is stored in git/objects. The name of this BLOB is the hash of the file's contents. The hashing is performed with hashFile(String filePath). If the BLOB already exists, the method will do nothing. If the method has failed to create the BLOB, it will output a message that says so.
 
+void updateIndex(String fileName)
+This method, given the String name of a file as a parameter, adds its hash and name to the "index" file located within the "git" directory. It assumes that fileName accurately names an existing file. If no such file exists, it will update "index" with a null BLOB. If the repository has not been initialized, this method will return an error message and not run. 
+
 
 GitTester.java
 The main method runs Git.initializeRepo(), verifyInstallation(), and cleanUp() ten times in a row. This shows that Git.initializeRepo() can run consistently.
