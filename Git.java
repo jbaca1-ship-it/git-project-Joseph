@@ -106,7 +106,6 @@ public class Git {
     }
 
     public static void robustReset() {
-        // so this literally killed the last branch I made... so... let's make some changes
         File projectDir = new File(".");
         removeAllContents(projectDir);
     }
@@ -114,7 +113,7 @@ public class Git {
     private static void removeAllContents(File dir) {
         File[] filesList = dir.listFiles();
         for (File f : filesList) {
-            if (!f.getName().contains(".java")) {
+            if (!f.getName().contains(".java")&&f.getName().charAt(0)!='.'&&!f.getName().equals("README.md")) {
                 if (f.isDirectory()) {
                     removeAllContents(f);
                 }
