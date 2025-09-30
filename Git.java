@@ -7,8 +7,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Git {
-    public static void main(String[] args) {
-    }
 
     public static void initializeRepo() {
         File git = new File("git");
@@ -74,17 +72,50 @@ public class Git {
         String path = "git/objects/" + fileName;
         if (!Files.exists(Paths.get(path))) {
             try {
-            String data = new String(Files.readAllBytes(Paths.get(filePath)));
-            Files.createFile(Paths.get("git/objects/" + fileName));
-            Files.write(Paths.get("git/objects/"+fileName), data.getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        if (!Files.exists(Paths.get(path))) {
-            System.err.println("BLOB creation failed.");
-        }
+                String data = new String(Files.readAllBytes(Paths.get(filePath)));
+                Files.createFile(Paths.get("git/objects/" + fileName));
+                Files.write(Paths.get("git/objects/" + fileName), data.getBytes(StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            if (!Files.exists(Paths.get(path))) {
+                System.err.println("BLOB creation failed.");
+            }
         }
     }
+
+    // private static void compressFile(String fileName) {
+    //     try {
+    //         FileInputStream fIn = new FileInputStream(fileName);
+    //         FileOutputStream fOut = new FileOutputStream(".compress-" + fileName);
+    //         DeflaterOutputStream dOut = new DeflaterOutputStream(fOut);
+    //         int data;
+    //         while ((data = fIn.read()) != -1) {
+    //             dOut.write(data);
+    //         }
+    //         fIn.close();
+    //         dOut.close();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
+    
+    // private static void decompressFile(String fileName) {
+    //     try {
+    //         FileInputStream fIn = new FileInputStream(fileName);
+    //         FileOutputStream fOut = new FileOutputStream(fileName.substring(10));
+    //         InflaterInputStream iIn = new InflaterInputStream(fIn);
+    //         int data;
+    //         while((data=iIn.read())!=-1)
+    //         {
+    //             fOut.write(data);
+    //         }
+    //         fOut.close();
+    //         iIn.close();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     public static void updateIndex(String fileName){
         if (Files.exists(Paths.get("git/index"))) {
