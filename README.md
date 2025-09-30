@@ -1,4 +1,4 @@
-Git.java
+**Git.java**
 
 void initializeRepo()
 This method initializes the Git repository. It creates the following files:
@@ -24,8 +24,14 @@ This method calls the recursive function removeAllContents to delete anything in
 void removeAllContents(File dir)
 A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden. Credit to rich and Peter Mortensen for starter code (https://stackoverflow.com/questions/1844688/how-can-i-read-all-files-in-a-folder-from-java).
 
-GitTester.java
-The main method runs Git.initializeRepo(), verifyInstallation(), and cleanUp() ten times in a row. This shows that Git.initializeRepo() can run consistently.
+*Not in use*
+void compressFile(String fileName)
+A method intended to read the contents of a file and produce a compressed version.
+void decompressFile(String fileName)
+A method intended to read the contents of a compressed file and produce a decompressed version.
+
+
+**GitTester.java**
 
 void verifyInstallation()
 This method checks to see if the files created by Git.initializeRepo() exists. It outputs a message stating whether or not the repo had been successfully initialized.
@@ -35,3 +41,8 @@ This method deletes all files initialized by Git.initializeRepo(), in addition t
 
 void comprehensiveTest()
 This method runs a comprehensive test of features as of GP-2.4. It first cleans the root of any traces of the old repository. Then, it initializes a new repository and verifies that said repository has been created. Next, it creates five files with varying contents, BLOBs them, and updates the index accordingly. Lastly, it checks to see if this process has been run correctly. Please note that modifying the contents of any of these files will then require that the final testing of the index be changed to reflect the new tests.
+
+
+**TheManWhoBLOBedTheWorld.java**
+Literally just the lyrics of David Bowie's 1970 hit "The Man Who Sold the World."
+Enjoy! 😁
