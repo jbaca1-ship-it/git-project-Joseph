@@ -2,9 +2,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class Git {
 
@@ -117,15 +119,39 @@ public class Git {
     //     }
     // }
 
-    public static void updateIndex(String fileName){
+    public static void updateIndex(String fileName) {
+        // please only call this on things that exist if you want things to work
         if (Files.exists(Paths.get("git/index"))) {
             String hash = hashFile(fileName);
             try {
                 String contents = Files.readString(Paths.get("git/index"));
                 if (!contents.isEmpty()) {
-                    contents += "\n";
+                    contents = contents + "\n";
                 }
-                Files.write(Paths.get("git/index"), (contents+hash+" "+fileName).getBytes(StandardCharsets.UTF_8));
+                File file = new File(fileName);
+                Path basePath = Paths.get(new File("..").getAbsolutePath());
+                Path relPath = Paths.get(file.getAbsolutePath());
+                Path correctPath = basePath.relativize(relPath);
+                String newThings = hash + " " + correctPath;
+                // this deals with a file that's already in the index but has new content
+                if (contents.contains(correctPath.toString()) && !contents.contains(hash)) {
+                    ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("git/index")));
+                    for (int i = 0; i < lines.size(); i++) {
+                        if (lines.get(i).contains(correctPath.toString())) {
+                            lines.set(i, newThings);
+                        }
+                    }
+                    StringBuilder str = new StringBuilder();
+                    for (int i = 0; i < lines.size() - 1; i++) {
+                        str.append(lines.get(i) + "\n");
+                    }
+                    str.append(lines.get(lines.size() - 1));
+                    Files.write(Paths.get("git/index"), str.toString().getBytes(StandardCharsets.UTF_8));
+                }
+                //this gets anything that's not in there with the correct hash already
+                else if (!contents.contains(correctPath.toString())) {
+                    Files.write(Paths.get("git/index"), (contents + newThings).getBytes(StandardCharsets.UTF_8));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -136,14 +162,23 @@ public class Git {
     }
 
     public static void robustReset() {
+        // this will not work if there is no repo to reset
         File projectDir = new File(".");
         removeAllContents(projectDir);
+        File index = new File("git/index");
+        index.delete();
+        try {
+            index.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private static void removeAllContents(File dir) {
+        // helper method for robustReset()
         File[] filesList = dir.listFiles();
         for (File f : filesList) {
-            if (!f.getName().contains(".java")&&f.getName().charAt(0)!='.'&&!f.getName().equals("README.md")) {
+            if (!f.getName().contains(".java")&&f.getName().charAt(0)!='.'&&!f.getName().equals("README.md")&&!f.getName().equals("index")&&!f.getName().equals("HEAD")) {
                 if (f.isDirectory()) {
                     removeAllContents(f);
                 }
