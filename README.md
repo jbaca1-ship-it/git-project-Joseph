@@ -24,6 +24,12 @@ This method calls the recursive function removeAllContents to delete anything in
 void removeAllContents(File dir)
 A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden. Credit to rich and Peter Mortensen for starter code (https://stackoverflow.com/questions/1844688/how-can-i-read-all-files-in-a-folder-from-java).
 
+String makeTree(String path)
+A method that, given the path to a directory, makes a tree object for that directory, and recursively makes tree objects for subdirectories and blob objects for files. These tree objects are stored in the project root, and the blobs are stored in git/objects.
+
+String hashString(String str)
+A helper method that hashes the contents of a string using the same method as in hashFile().
+
 *Not in use*
 void compressFile(String fileName)
 A method intended to read the contents of a file and produce a compressed version.

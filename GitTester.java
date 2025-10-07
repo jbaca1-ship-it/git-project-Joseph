@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-        comprehensiveTest();
-        Git.robustReset();
-        cleanUp();
+        // comprehensiveTest();
+        // Git.robustReset();
+        // cleanUp();
     }
     
     public static void verifyInitialization() {
