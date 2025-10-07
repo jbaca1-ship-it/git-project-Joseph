@@ -178,14 +178,89 @@ public class Git {
         // helper method for robustReset()
         File[] filesList = dir.listFiles();
         for (File f : filesList) {
-            if (!f.getName().contains(".java")&&f.getName().charAt(0)!='.'&&!f.getName().equals("README.md")&&!f.getName().equals("index")&&!f.getName().equals("HEAD")) {
+            if (!f.getName().contains(".java") && f.getName().charAt(0) != '.' && !f.getName().equals("README.md")
+                    && !f.getName().equals("index") && !f.getName().equals("HEAD")) {
                 if (f.isDirectory()) {
                     removeAllContents(f);
-                }
-                else {
+                } else {
                     f.delete();
                 }
             }
+        }
+    }
+    
+    public static String makeTree(String path) {
+        StringBuilder contents = new StringBuilder();
+        File dir = new File(path);
+        if (!dir.exists()) {
+            System.err.println("It's generally best to make trees of directories that exist... cough cough");
+            return null;
+        }
+        else {
+            File[] filesList = dir.listFiles();
+        for (File f : filesList) {
+            String fPath = f.getPath();
+            if (!contents.isEmpty()) {
+                if (f.isDirectory()) {
+                makeTree(fPath);
+                contents.append("\ntree " + makeTree(fPath) + " " + fPath);
+            } else {
+                createBLOB(fPath);
+                contents.append("\nblob " + hashFile(fPath) + " " + fPath);
+            }
+            }
+            else {
+                if (f.isDirectory()) {
+                makeTree(fPath);
+                contents.append("tree " + makeTree(fPath) + " " + fPath);
+            } else {
+                createBLOB(fPath);
+                contents.append("blob " + hashFile(fPath) + " " + fPath);
+            }
+            }
+        }
+        String fileName = hashString(contents.toString());
+        if (fileName == null) {
+            System.err.println("Said file does not exist.");
+        }
+        if (!Files.exists(Paths.get(fileName))) {
+            try {
+                Files.createFile(Paths.get(fileName));
+                Files.write(Paths.get(fileName), contents.toString().getBytes(StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+            if (!Files.exists(Paths.get(path))) {
+                System.err.println("BLOB creation failed.");
+            }
+        }
+        return hashString(contents.toString());
+        }
+    }
+
+    private static String hashString(String str) {
+        try {
+            byte[] bytes = str.getBytes();
+            String content = new String(bytes, StandardCharsets.UTF_8);
+            if (!content.isEmpty() && content.charAt(0) == '\uFEFF') {
+                content = content.substring(1);
+            }
+            content = content.replace("\r\n", "\n").replace("\r", "\n");
+            byte[] normalizedBytes = content.getBytes(StandardCharsets.UTF_8);
+            MessageDigest mDigest = MessageDigest.getInstance("SHA-1");
+            byte[] hashedBytes = mDigest.digest(normalizedBytes);
+            StringBuilder hashedString = new StringBuilder();
+            for (byte b : hashedBytes) {
+                String hexB = Integer.toHexString(0xff & b);
+                if (hexB.length() == 1) {
+                    hashedString.append("0");
+                }
+                hashedString.append(hexB);
+            }
+            return hashedString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println(e);
+            return null;
         }
     }
 }
