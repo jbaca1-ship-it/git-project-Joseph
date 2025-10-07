@@ -16,7 +16,7 @@ void createBlob(String fileName)
 This method, given the String name of a file as a parameter, converts it into a BLOB which is stored in git/objects. The name of this BLOB is the hash of the file's contents. The hashing is performed with hashFile(String filePath). If the BLOB already exists, the method will do nothing. If the method has failed to create the BLOB, it will output a message that says so.
 
 void updateIndex(String fileName)
-This method, given the String name of a file as a parameter, adds its hash and name to the "index" file located within the "git" directory. It assumes that fileName accurately names an existing file. If no such file exists, it will update "index" with a null BLOB. If the repository has not been initialized, this method will return an error message and not run.
+This method, given the String name of a file as a parameter, adds its hash and name to the "index" file located within the "git" directory. It assumes that fileName accurately names an existing file. If no such file exists, it will update "index" with a null BLOB. If the file is already present in its current state, nothing will happen. If the file is in the index but its contents have changed, the index will be changed to reflect this. If the repository has not been initialized, this method will return an error message and not run.
 
 void robustReset()
 This method calls the recursive function removeAllContents to delete anything in the project root that is not part of the git project or hidden.
@@ -41,8 +41,3 @@ This method deletes all files initialized by Git.initializeRepo(), in addition t
 
 void comprehensiveTest()
 This method runs a comprehensive test of features as of GP-2.4. It first cleans the root of any traces of the old repository. Then, it initializes a new repository and verifies that said repository has been created. Next, it creates five files with varying contents, BLOBs them, and updates the index accordingly. Lastly, it checks to see if this process has been run correctly. Please note that modifying the contents of any of these files will then require that the final testing of the index be changed to reflect the new tests.
-
-
-**TheManWhoBLOBedTheWorld.java**
-Literally just the lyrics of David Bowie's 1970 hit "The Man Who Sold the World."
-Enjoy! 😁

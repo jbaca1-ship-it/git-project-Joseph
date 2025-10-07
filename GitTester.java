@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class GitTester {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         comprehensiveTest();
         Git.robustReset();
         cleanUp();
@@ -41,6 +41,8 @@ public class GitTester {
     }
 
     public static void comprehensiveTest() {
+        // this thing is very picky so it works but if you change literally anything for testing purpose you'll need to change this
+        // you need a repo already to run it also
         File file1 = new File("test1.txt");
         File file2 = new File("test2.txt");
         File file3 = new File("test3.txt");
@@ -74,8 +76,17 @@ public class GitTester {
         Git.updateIndex("test4.txt");
         Git.updateIndex("test5.txt");
         try {
+            Files.write(Paths.get("test1.txt"), "Text and drive".getBytes(StandardCharsets.UTF_8));
+            Git.updateIndex("test1.txt");
+            Files.write(Paths.get("test1.txt"), "Text".getBytes(StandardCharsets.UTF_8));
+            Git.updateIndex("test1.txt");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
             String indexContents = Files.readString(Paths.get("git/index"));
-            String correctContents = "c3328c39b0e29f78e9ff45db674248b1d245887d test1.txt\n6673313176a748c8aa9b975a10db63aa333dae91 test2.txt\nf0e450555c24daaa256a8415005c577879f6b741 test3.txt\n8bfb89b8cc3b5fe3085c0fc92a65907bb3a5e170 test4.txt\nda39a3ee5e6b4b0d3255bfef95601890afd80709 test5.txt";
+            String correctContents = "c3328c39b0e29f78e9ff45db674248b1d245887d git-project-Joseph\\test1.txt\n" +"6673313176a748c8aa9b975a10db63aa333dae91 git-project-Joseph\\test2.txt\n" + "f0e450555c24daaa256a8415005c577879f6b741 git-project-Joseph\\test3.txt\n" + "8bfb89b8cc3b5fe3085c0fc92a65907bb3a5e170 git-project-Joseph\\test4.txt\n" + "da39a3ee5e6b4b0d3255bfef95601890afd80709 git-project-Joseph\\test5.txt";
             if (!indexContents.equals(correctContents)) {
                 System.out.println("ERROR!\nExpected:\n" + correctContents + "\nActual:\n" + indexContents);
             }
