@@ -1,10 +1,10 @@
 public class GitObject implements Comparable<GitObject> {
-    private String type;
+    // private String type;
     private String hash;
     private String path;
 
-    public GitObject(String type, String hash, String path) {
-        this.type = type;
+    public GitObject(String hash, String path) {
+        // this.type = type;
         this.hash = hash;
         this.path = path;
     }
@@ -22,19 +22,19 @@ public class GitObject implements Comparable<GitObject> {
     
     
 
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
+    // /**
+    //  * @return the type
+    //  */
+    // public String getType() {
+    //     return type;
+    // // }
 
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
+    // /**
+    //  * @param type the type to set
+    //  */
+    // public void setType(String type) {
+    //     this.type = type;
+    // }
 
     /**
      * @return the hash
@@ -65,6 +65,6 @@ public class GitObject implements Comparable<GitObject> {
     }
 
     public String toString() {
-        return type + " " + hash + " " + path;
+        return hash + " " + path;
     }
 }

@@ -275,16 +275,15 @@ public class Git {
             ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("workingList")));
             ArrayList<GitObject> objects = new ArrayList<GitObject>();
             for (String line : lines) {
-                objects.add(new GitObject(line.substring(0, 4), line.substring(5, 45), line.substring(46)));
+                objects.add(new GitObject(line.substring(0, 41), line.substring(41)));
             }
             // System.out.println(lines);
             Collections.sort(objects);
             // System.out.println(objects);
             StringBuilder wLCont = new StringBuilder();
             for (GitObject gitObject : objects) {
-                wLCont.append(gitObject.toString() + "\n");
+                wLCont.append("blob "+gitObject.toString() + "\n");
             }
-            // System.out.println("help me");
             String data = wLCont.toString();
             Files.write(Paths.get("workingList"), data.trim().getBytes(StandardCharsets.UTF_8));
             String info = new String(Files.readAllBytes(Paths.get("workingList")));
@@ -292,58 +291,21 @@ public class Git {
                 condense();
                 info = new String(Files.readAllBytes(Paths.get("workingList")));
             }
-            File root = new File("root");
-            // System.out.println("cool");
+            String rootHash = hashFile("workingList");
+            File root = new File("git/objects/"+ rootHash);
             root.createNewFile();
-            // System.out.println("cool");
-            Files.write(Paths.get("root"), Files.readAllBytes(Paths.get("workingList")));
-            // wL.delete();
-            Files.write(Paths.get("workingList"), ("tree "+hashFile("root")+" (root)").getBytes(StandardCharsets.UTF_8));
-            // condense();
-            // int mostSlash = 0;
-            // for (int i = 0; i < objects.size(); i++) {
-            //     if (numSlashesTree(objects.get(i).getPath()) > mostSlash) {
-            //         mostSlash = numSlashesTree(objects.get(i).getPath());
-            //     }
-            // }
-            // ArrayList<String> lessLines = new ArrayList<String>();
-            // StringBuilder toCondense = new StringBuilder();
-            // StringBuilder remainder = new StringBuilder();
-            // for (int i = 0; i < lines.size(); i++) {
-            //     if (numSlashesTree(lines.get(i)) == mostSlash) {
-            //         lines.remove(lines.get(i));
-            //         lessLines.add(lines.get(i));
-            //         i--;
-            //     }
-            // }
-            // int end = 0;
-            // for (int i = 0; i < lessLines.get(0).length(); i++) {
-            //     if (lines.get(i).charAt(i) == '/') {
-            //         end = i;
-            //     }
-            // }
-            // String path = 
-            //  System.out.println("help me");
-            // System.out.println(mostSlash);
-            // findLeafiestAndCombine();
-            // System.out.println(objects);
-            // for (GitObject gitObject : objects) {
-            //     System.out.println(gitObject.type);
-            //     if (gitObject.type.equals("tree")) {
-            //         File dir = new File(gitObject.path);
-            //         dir.mkdirs();
-            //     }
-            //     if (gitObject.type.equals("blob")) {
-            //         File blob = new File(gitObject.path);
-            //         blob.createNewFile();
-            //         // System.out.println("ski");
-            //     }
-            // }
+            Files.write(Paths.get("git/objects/"+ rootHash), Files.readAllBytes(Paths.get("workingList")));
+            Files.write(Paths.get("workingList"), ("tree " + rootHash + " (root)").getBytes(StandardCharsets.UTF_8));
+            String topHash = hashFile("workingList");
+            System.out.println(rootHash);
+            System.out.println(topHash);
+            File finalFile = new File("git/objects/"+topHash);
+            finalFile.createNewFile();
+            Files.write(Paths.get("git/objects/" + topHash), Files.readAllBytes(Paths.get("workingList")));
+            Files.delete(Paths.get("workingList"));
+
         } catch (Exception e) {
         }
-        // File dir = new File(".");
-        // String str = indexHelper("git-project-Joseph");
-        // System.out.println(str);
     }
 
     private static void condense() {
@@ -363,7 +325,7 @@ public class Git {
             }
             String path = "";
             for (int i = 0; i < longest.get(0).length(); i++) {
-                if (longest.get(0).charAt(i) == '/') {
+                if (longest.get(0).charAt(i) == '\\') {
                     path = longest.get(0).substring(46, i + 1);
                 }
             }
@@ -376,6 +338,7 @@ public class Git {
             // System.out.println(longest);
             File newTree = new File("git/objects/"+hashString(contents.trim()));
             newTree.createNewFile();
+            newTree.mkdir();
             Files.write(Paths.get("git/objects/"+hashString(contents.trim())), contents.trim().getBytes(StandardCharsets.UTF_8));
             for (int i = 0; i < lines.size(); i++) {
                 if (lines.get(i).contains(path)) {
@@ -393,124 +356,30 @@ public class Git {
         }
     }
     
-    // private static String indexHelper(String path) {
-    //     StringBuilder contents = new StringBuilder();
-    //     File dir = new File(path);
-    //     File[] filesList = dir.listFiles();
-    //     for (File f : filesList) {
-    //         String fPath = f.getPath();
-    //         if (!contents.isEmpty()) {
-    //             if (f.isDirectory()) {
-    //                 // makeTree(fPath);
-    //                 contents.append("\ntree " + hashString(fPath) + " " + fPath);
-    //             } else {
-    //                 // createBLOB(fPath);
-    //                 contents.append("\nblob " + hashString(fPath) + " " + fPath);
-    //             }
-    //         } else {
-    //             if (f.isDirectory()) {
-    //                 // makeTree(fPath);
-    //                 contents.append("tree " + hashString(fPath) + " " + fPath);
-    //             } else {
-    //                 // createBLOB(fPath);
-    //                 contents.append("blob " + hashString(fPath) + " " + fPath);
-    //             }
-    //         }
-    //     }
-    //     return contents.toString();
-    // }
-
-    // public static void createTreeFromIndex() {
-    //     File workingList = new File("WorkingList");
-    //     try {
-    //         String indexContents = new String(Files.readAllBytes(Paths.get("git/index")));
-    //         workingList.createNewFile();
-    //         Files.write(Paths.get("WorkingList"), indexContents.getBytes(StandardCharsets.UTF_8));
-    //         ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("WorkingList")));
-    //         ArrayList<GitObject> objects = new ArrayList<GitObject>();
-    //         for (String line : lines) {
-    //             objects.add(new GitObject(line.substring(0, 4), line.substring(5, 45), line.substring(46)));
-    //         }
-    //         // System.out.println(lines);
-    //         Collections.sort(objects);
-    //         // System.out.println(objects);
-    //         StringBuilder wLCont = new StringBuilder();
-    //         for (GitObject gitObject : objects) {
-    //             wLCont.append(gitObject.toString() + "\n");
-    //         }
-    //         String data = wLCont.toString();
-    //         Files.write(Paths.get("WorkingList"), data.trim().getBytes(StandardCharsets.UTF_8));
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
-    private static void findLeafiestAndCombine() {
-        int mostLeaves = 0;
-        try {
-            ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("workingList")));
-            // ArrayList<GitObject> objects = new ArrayList<GitObject>();
-            // for (String line : lines) {
-            //     objects.add(new GitObject(line.substring(0, 4), line.substring(5, 45), line.substring(46)));
-            // }
-            ArrayList<String> lessLines = new ArrayList<String>();
-            StringBuilder toCondense = new StringBuilder();
-            StringBuilder remainder = new StringBuilder();
-            for (int i = 0; i < lines.size(); i++) {
-                if (numSlashesTree(lines.get(i)) > mostLeaves) {
-                    mostLeaves = numSlashesTree(lines.get(i));
-                }
-            }
-            for (int i = 0; i < lines.size(); i++) {
-                if (numSlashesTree(lines.get(i)) == mostLeaves) {
-                    lines.remove(lines.get(i));
-                    lessLines.add(lines.get(i));
-                    i--;
-                }
-            }
-            int start = 0;
-            int end = 0;
-            for (int i = 0; i < lessLines.get(0).length(); i++) {
-                if (lines.get(i).charAt(i) == '/') {
-                    start = end;
-                    end = i;
-                }
-            }
-            String dirName = lessLines.get(0).substring(0, end);
-            for (int i = 0; i < lessLines.size(); i++) {
-                if (lessLines.get(i).contains(dirName)) {
-                    toCondense.append(lessLines.get(i) + "\n");
-                } else {
-                    lines.add(lessLines.get(i));
-                }
-            }
-            // String condensed = hashString(toCondense.toString().trim());
-            // remainder.append("tree " + condensed + dirName);
-            System.out.println(toCondense.toString());
-            for (String line : lines) {
-                toCondense.append(line + "\n");
-            }
-            Files.write(Paths.get("workingList"), toCondense.toString().trim().getBytes(StandardCharsets.UTF_8));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
     private static int numSlashesTree(String str) {
         // System.out.println("help me");
         //   System.out.println("help me");
-         str = str.substring(46);
+        str = str.substring(46);
         //  System.out.println("help me");
         int count = 0;
         //  System.out.println("help me");
         //  System.out.println("help me");
         for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == '/') {
+            if (str.charAt(i) == '\\') {
                 count++;
             }
         }
         //  System.out.println("help me");
         return count;
+    }
+    
+    private static String getFinalPath(String str) {
+        int index = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '\\') {
+                index = i;
+            }
+        }
+        return str.substring(index + 1);
     }
 }
