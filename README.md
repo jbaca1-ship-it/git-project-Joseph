@@ -1,18 +1,4 @@
-I discovered lots of bugs relating to the index file and the construction of the tree so I have only been testing with an empty root tree. I am still geting a bug relating to the runtime of my code.
-
-I fixed the use of the index file because before it was not used and now createblob changes the index file
-
-I implimented the createtreefromindex method to return the hash of the root tree. The Git class is not correctly making the tree.
-
-
-
-
 **Git.java**
-
-String commit(String author, String message)
-this method creates a commit file with all the relevant info of the commit including:
-author, date, tree, previous commit
-it also updates the head to show that this commit is the most recent commit
 
 void initializeRepo()
 This method initializes the Git repository. It creates the following files:
@@ -71,17 +57,3 @@ This method runs a comprehensive test of features as of GP-2.4. It first cleans 
 
 **GitObject.java**
 A class that was created solely for createTreeFromIndex() and that is probably unnecessary but it is past 2 AM so if this still exists by this morning then it still exists.
-
-
-**GitWrapper.java**
-void init()
-this initializes the repositiory by using Git.initializeRepo()
-
-void add(String filePath)
-this method blobs a file of the designated filePath. It also adds all of the nessasary folders so the filePath does not throw any errors.
-
-void commit(String author, String message)
-this method commits all of the added files by using the Git.commit(String author, String message) method.
-
-
-

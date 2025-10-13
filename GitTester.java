@@ -3,29 +3,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-        
-        // GitWrapper gw = new GitWrapper();
-        // // gw.init();
-        // // cleanUp();
-        // gw.init();
-        // gw.add("myProgram/hello.txt");
-        // gw.add("myProgram/inner/world.txt");
-        // gw.commit("John Doe", "Initial commit");
-
-
-        // Git.initializeRepo();
-        Git.initializeRepo();
-        Git.createBLOB("textFiles/angus.txt");
-        //Git.updateIndex("textFiles/angus.txt");
-        Git.createBLOB("textFiles/sam.txt");
-        //Git.updateIndex("textFiles/sam.txt");
         Git.createTreeFromIndex();
-        //Git.commit("angus", "now");
-        //comprehensiveTest();
+        // comprehensiveTest();
         // Git.robustReset();
         // cleanUp();
     }
@@ -44,24 +26,22 @@ public class GitTester {
     }
     
     public static void cleanUp() {
-        //File git = new File("git");
+        File git = new File("git");
         File obj = new File("git/objects");
-        //File index = new File("git/index");
-        //File head = new File("git/HEAD");
+        File index = new File("git/index");
+        File head = new File("git/HEAD");
         File[] files = obj.listFiles();
-        if (files != null){
         for (File file : files) {
             file.delete();
         }
-    }
         obj.delete();
-        //index.delete();
-        //head.delete();
-        //git.delete();
+        index.delete();
+        head.delete();
+        git.delete();
         System.out.println("Clean-up successful.");
     }
 
-    public static void comprehensiveTest() throws IOException{
+    public static void comprehensiveTest() {
         // this thing is very picky so it works but if you change literally anything for testing purpose you'll need to change this
         // you need a repo already to run it also
         File file1 = new File("test1.txt");

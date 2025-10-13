@@ -8,40 +8,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.time.LocalDateTime;
-import java.nio.file.StandardOpenOption;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.FileReader;
 
 public class Git {
-
-    public static String commit(String author, String message) throws IOException{
-        File text = new File("file");
-        
-        LocalDateTime datetime = LocalDateTime.now();
-
-        
-
-
-        Files.write(Paths.get("file"), ("tree: " + createTreeFromIndex() + "\n").getBytes(), StandardOpenOption.CREATE , StandardOpenOption.APPEND);
-
-        byte[] head;
-        if (Files.size(Paths.get("git/HEAD")) > 0){
-        head = Files.readAllBytes(Paths.get("git/HEAD"));
-        Files.write(Paths.get("file"), ("parent: " + new String(head, StandardCharsets.UTF_8) + "\n").getBytes(), StandardOpenOption.APPEND);
-        }
-
-        Files.write(Paths.get("file"), ("author: " + author + "\n").getBytes(), StandardOpenOption.APPEND);
-        Files.write(Paths.get("file"), ("date: " + datetime.toLocalDate() + " " + datetime.toLocalTime() + "\n").getBytes(), StandardOpenOption.APPEND);
-        Files.write(Paths.get("file"),   ("message: " + message).getBytes(), StandardOpenOption.APPEND);
-        String hash = hashFile("file");
-        text.renameTo(new File("git/objects/" + hash));
-        Files.write(Paths.get("git/HEAD"), hash.getBytes());
-        return hash;
-    }
-
 
     public static void initializeRepo() {
         File git = new File("git");
@@ -99,7 +67,7 @@ public class Git {
         }
     }
     
-    public static void createBLOB(String filePath) throws IOException{
+    public static void createBLOB(String filePath) {
         String fileName = hashFile(filePath);
         if (fileName == null) {
             System.err.println("Said file does not exist.");
@@ -117,29 +85,7 @@ public class Git {
                 System.err.println("BLOB creation failed.");
             }
         }
-        boolean check = false;
-        String name = "" + Git.hashFile(path) + " " + path;
-            try (BufferedReader br1 = new BufferedReader(new FileReader("git/index"))){
-            String text = "";
-            String line;
-            while ((line = br1.readLine()) != null) {
-                text = line;
-                if (text.equals(name)){
-                    check = true;
-                    System.out.println("cannot add identical files");
-                }
-            }
-            br1.close();
-        }catch (Exception e){
-           System.out.println(e);
-        };
-            if (check == false){
-                
-            BufferedWriter bw1 = new BufferedWriter(new FileWriter("git/index", true));
-            bw1.write("" + Git.hashFile(path) + " " + filePath + "\n");
-            bw1.close();
-            }
-        }
+    }
 
     // private static void compressFile(String fileName) {
     //     try {
@@ -244,7 +190,7 @@ public class Git {
         }
     }
     
-    public static String makeTree(String path) throws IOException{
+    public static String makeTree(String path) {
         StringBuilder contents = new StringBuilder();
         File dir = new File(path);
         if (!dir.exists()) {
@@ -319,11 +265,11 @@ public class Git {
         }
     }
 
-    public static String createTreeFromIndex() throws IOException {
-        String rootHash = "";
+    public static void createTreeFromIndex() {
         File wL = new File("workingList");
         // System.out.println(numSlashesTree("blob 7777777777777777777777777777777777777777 12/2/2/2/2.txt"));
-        //try {
+        try {
+            wL.createNewFile();
             byte[] content = Files.readAllBytes(Paths.get("git/index"));
             Files.write(Paths.get("workingList"), content);
             ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("workingList")));
@@ -345,22 +291,21 @@ public class Git {
                 condense();
                 info = new String(Files.readAllBytes(Paths.get("workingList")));
             }
-            rootHash = hashFile("workingList");
+            String rootHash = hashFile("workingList");
             File root = new File("git/objects/"+ rootHash);
             root.createNewFile();
             Files.write(Paths.get("git/objects/"+ rootHash), Files.readAllBytes(Paths.get("workingList")));
             Files.write(Paths.get("workingList"), ("tree " + rootHash + " (root)").getBytes(StandardCharsets.UTF_8));
             String topHash = hashFile("workingList");
             System.out.println(rootHash);
+            System.out.println(topHash);
             File finalFile = new File("git/objects/"+topHash);
             finalFile.createNewFile();
             Files.write(Paths.get("git/objects/" + topHash), Files.readAllBytes(Paths.get("workingList")));
             Files.delete(Paths.get("workingList"));
 
-        //} catch (Exception e) {
-            //System.out.println(e);
-        //}
-        return rootHash;
+        } catch (Exception e) {
+        }
     }
 
     private static void condense() {
@@ -390,6 +335,7 @@ public class Git {
                     contents += longest.get(i) + "\n";
                 }
             }
+            // System.out.println(longest);
             File newTree = new File("git/objects/"+hashString(contents.trim()));
             newTree.createNewFile();
             newTree.mkdir();
@@ -400,9 +346,7 @@ public class Git {
                     i--;
                 }
             }
-            if (path.length() > 0){
             lines.add("tree " + hashString(contents.trim()) +" "+ path.substring(0, path.length()-1));
-            }
             StringBuilder data = new StringBuilder();
             for (int i = 0; i < lines.size(); i++) {
                 data.append(lines.get(i)+"\n");
