@@ -8,8 +8,36 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.time.LocalDateTime;
+import java.nio.file.StandardOpenOption;
 
 public class Git {
+
+    public static void commit(String author, String message) throws IOException{
+        File text = new File("file");
+        
+        LocalDateTime datetime = LocalDateTime.now();
+
+        
+
+
+        Files.write(Paths.get("file"), ("tree: " + createTreeFromIndex() + "\n").getBytes(), StandardOpenOption.CREATE , StandardOpenOption.APPEND);
+
+        byte[] head;
+        if (Files.size(Paths.get("git/HEAD")) > 0){
+        head = Files.readAllBytes(Paths.get("git/HEAD"));
+        Files.write(Paths.get("file"), ("parent: " + new String(head, StandardCharsets.UTF_8) + "\n").getBytes(), StandardOpenOption.APPEND);
+        }
+
+        Files.write(Paths.get("file"), ("author: " + author + "\n").getBytes(), StandardOpenOption.APPEND);
+        Files.write(Paths.get("file"), ("date: " + datetime.toLocalDate() + " " + datetime.toLocalTime() + "\n").getBytes(), StandardOpenOption.APPEND);
+        Files.write(Paths.get("file"),   ("message: " + message).getBytes(), StandardOpenOption.APPEND);
+        String hash = hashFile("file");
+        text.renameTo(new File("git/objects/" + hash));
+        Files.write(Paths.get("git/HEAD"), hash.getBytes());
+
+    }
+
 
     public static void initializeRepo() {
         File git = new File("git");
@@ -265,7 +293,8 @@ public class Git {
         }
     }
 
-    public static void createTreeFromIndex() {
+    public static String createTreeFromIndex() {
+        String rootHash = "";
         File wL = new File("workingList");
         // System.out.println(numSlashesTree("blob 7777777777777777777777777777777777777777 12/2/2/2/2.txt"));
         try {
@@ -291,13 +320,12 @@ public class Git {
                 condense();
                 info = new String(Files.readAllBytes(Paths.get("workingList")));
             }
-            String rootHash = hashFile("workingList");
+            rootHash = hashFile("workingList");
             File root = new File("git/objects/"+ rootHash);
             root.createNewFile();
             Files.write(Paths.get("git/objects/"+ rootHash), Files.readAllBytes(Paths.get("workingList")));
             Files.write(Paths.get("workingList"), ("tree " + rootHash + " (root)").getBytes(StandardCharsets.UTF_8));
             String topHash = hashFile("workingList");
-            System.out.println(rootHash);
             System.out.println(topHash);
             File finalFile = new File("git/objects/"+topHash);
             finalFile.createNewFile();
@@ -306,6 +334,7 @@ public class Git {
 
         } catch (Exception e) {
         }
+        return rootHash;
     }
 
     private static void condense() {
@@ -335,7 +364,6 @@ public class Git {
                     contents += longest.get(i) + "\n";
                 }
             }
-            // System.out.println(longest);
             File newTree = new File("git/objects/"+hashString(contents.trim()));
             newTree.createNewFile();
             newTree.mkdir();
