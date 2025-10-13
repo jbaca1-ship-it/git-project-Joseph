@@ -8,21 +8,23 @@ import java.time.LocalDateTime;
 public class GitTester {
     public static void main(String[] args) throws IOException {
         
-        GitWrapper gw = new GitWrapper();
+        // GitWrapper gw = new GitWrapper();
+        // // gw.init();
+        // // cleanUp();
         // gw.init();
-        // cleanUp();
-        gw.init();
-        gw.add("myProgram/hello.txt");
-        gw.add("myProgram/inner/world.txt");
-        gw.commit("John Doe", "Initial commit");
+        // gw.add("myProgram/hello.txt");
+        // gw.add("myProgram/inner/world.txt");
+        // gw.commit("John Doe", "Initial commit");
 
 
         // Git.initializeRepo();
-        // cleanUp();
-        // Git.initializeRepo();
-        // Git.createBLOB("textFiles/angus.txt");
-        // Git.createBLOB("textFiles/sam.txt");
-        // Git.commit("angus", "now");
+        Git.initializeRepo();
+        Git.createBLOB("textFiles/angus.txt");
+        //Git.updateIndex("textFiles/angus.txt");
+        Git.createBLOB("textFiles/sam.txt");
+        //Git.updateIndex("textFiles/sam.txt");
+        Git.createTreeFromIndex();
+        //Git.commit("angus", "now");
         //comprehensiveTest();
         // Git.robustReset();
         // cleanUp();

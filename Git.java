@@ -136,7 +136,7 @@ public class Git {
             if (check == false){
                 
             BufferedWriter bw1 = new BufferedWriter(new FileWriter("git/index", true));
-            bw1.write("" + Git.hashFile(path) + " " + path + "\n");
+            bw1.write("" + Git.hashFile(path) + " " + filePath + "\n");
             bw1.close();
             }
         }
@@ -319,12 +319,11 @@ public class Git {
         }
     }
 
-    public static String createTreeFromIndex() {
+    public static String createTreeFromIndex() throws IOException {
         String rootHash = "";
         File wL = new File("workingList");
         // System.out.println(numSlashesTree("blob 7777777777777777777777777777777777777777 12/2/2/2/2.txt"));
-        try {
-            wL.createNewFile();
+        //try {
             byte[] content = Files.readAllBytes(Paths.get("git/index"));
             Files.write(Paths.get("workingList"), content);
             ArrayList<String> lines = new ArrayList<String>(Files.readAllLines(Paths.get("workingList")));
@@ -352,14 +351,15 @@ public class Git {
             Files.write(Paths.get("git/objects/"+ rootHash), Files.readAllBytes(Paths.get("workingList")));
             Files.write(Paths.get("workingList"), ("tree " + rootHash + " (root)").getBytes(StandardCharsets.UTF_8));
             String topHash = hashFile("workingList");
-            System.out.println(topHash);
+            System.out.println(rootHash);
             File finalFile = new File("git/objects/"+topHash);
             finalFile.createNewFile();
             Files.write(Paths.get("git/objects/" + topHash), Files.readAllBytes(Paths.get("workingList")));
             Files.delete(Paths.get("workingList"));
 
-        } catch (Exception e) {
-        }
+        //} catch (Exception e) {
+            //System.out.println(e);
+        //}
         return rootHash;
     }
 
@@ -400,7 +400,9 @@ public class Git {
                     i--;
                 }
             }
+            if (path.length() > 0){
             lines.add("tree " + hashString(contents.trim()) +" "+ path.substring(0, path.length()-1));
+            }
             StringBuilder data = new StringBuilder();
             for (int i = 0; i < lines.size(); i++) {
                 data.append(lines.get(i)+"\n");
