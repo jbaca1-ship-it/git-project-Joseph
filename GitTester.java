@@ -3,11 +3,17 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-        Git.createTreeFromIndex();
-        // comprehensiveTest();
+        Git.initializeRepo();
+        cleanUp();
+        Git.initializeRepo();
+        Git.createBLOB("textFiles/angus.txt");
+        //Git.createBLOB("textFiles/sam.txt");
+        Git.commit("angus", "now");
+        //comprehensiveTest();
         // Git.robustReset();
         // cleanUp();
     }
@@ -26,18 +32,18 @@ public class GitTester {
     }
     
     public static void cleanUp() {
-        File git = new File("git");
+        //File git = new File("git");
         File obj = new File("git/objects");
-        File index = new File("git/index");
-        File head = new File("git/HEAD");
+        //File index = new File("git/index");
+        //File head = new File("git/HEAD");
         File[] files = obj.listFiles();
         for (File file : files) {
             file.delete();
         }
         obj.delete();
-        index.delete();
-        head.delete();
-        git.delete();
+        //index.delete();
+        //head.delete();
+        //git.delete();
         System.out.println("Clean-up successful.");
     }
 
