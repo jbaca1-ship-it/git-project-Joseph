@@ -7,12 +7,22 @@ import java.time.LocalDateTime;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-        Git.initializeRepo();
-        cleanUp();
-        Git.initializeRepo();
-        Git.createBLOB("textFiles/angus.txt");
-        //Git.createBLOB("textFiles/sam.txt");
-        Git.commit("angus", "now");
+        
+        GitWrapper gw = new GitWrapper();
+        // gw.init();
+        // cleanUp();
+        gw.init();
+        gw.add("myProgram/hello.txt");
+        gw.add("myProgram/inner/world.txt");
+        gw.commit("John Doe", "Initial commit");
+
+
+        // Git.initializeRepo();
+        // cleanUp();
+        // Git.initializeRepo();
+        // Git.createBLOB("textFiles/angus.txt");
+        // Git.createBLOB("textFiles/sam.txt");
+        // Git.commit("angus", "now");
         //comprehensiveTest();
         // Git.robustReset();
         // cleanUp();
@@ -37,9 +47,11 @@ public class GitTester {
         //File index = new File("git/index");
         //File head = new File("git/HEAD");
         File[] files = obj.listFiles();
+        if (files != null){
         for (File file : files) {
             file.delete();
         }
+    }
         obj.delete();
         //index.delete();
         //head.delete();
@@ -47,7 +59,7 @@ public class GitTester {
         System.out.println("Clean-up successful.");
     }
 
-    public static void comprehensiveTest() {
+    public static void comprehensiveTest() throws IOException{
         // this thing is very picky so it works but if you change literally anything for testing purpose you'll need to change this
         // you need a repo already to run it also
         File file1 = new File("test1.txt");
