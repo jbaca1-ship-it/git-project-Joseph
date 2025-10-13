@@ -10,10 +10,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.time.LocalDateTime;
 import java.nio.file.StandardOpenOption;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.FileReader;
 
 public class Git {
 
-    public static void commit(String author, String message) throws IOException{
+    public static String commit(String author, String message) throws IOException{
         File text = new File("file");
         
         LocalDateTime datetime = LocalDateTime.now();
@@ -35,7 +39,7 @@ public class Git {
         String hash = hashFile("file");
         text.renameTo(new File("git/objects/" + hash));
         Files.write(Paths.get("git/HEAD"), hash.getBytes());
-
+        return hash;
     }
 
 
@@ -95,7 +99,7 @@ public class Git {
         }
     }
     
-    public static void createBLOB(String filePath) {
+    public static void createBLOB(String filePath) throws IOException{
         String fileName = hashFile(filePath);
         if (fileName == null) {
             System.err.println("Said file does not exist.");
@@ -113,7 +117,29 @@ public class Git {
                 System.err.println("BLOB creation failed.");
             }
         }
-    }
+        boolean check = false;
+        String name = "" + Git.hashFile(path) + " " + path;
+            try (BufferedReader br1 = new BufferedReader(new FileReader("git/index"))){
+            String text = "";
+            String line;
+            while ((line = br1.readLine()) != null) {
+                text = line;
+                if (text.equals(name)){
+                    check = true;
+                    System.out.println("cannot add identical files");
+                }
+            }
+            br1.close();
+        }catch (Exception e){
+           System.out.println(e);
+        };
+            if (check == false){
+                
+            BufferedWriter bw1 = new BufferedWriter(new FileWriter("git/index", true));
+            bw1.write("" + Git.hashFile(path) + " " + path + "\n");
+            bw1.close();
+            }
+        }
 
     // private static void compressFile(String fileName) {
     //     try {
@@ -218,7 +244,7 @@ public class Git {
         }
     }
     
-    public static String makeTree(String path) {
+    public static String makeTree(String path) throws IOException{
         StringBuilder contents = new StringBuilder();
         File dir = new File(path);
         if (!dir.exists()) {
