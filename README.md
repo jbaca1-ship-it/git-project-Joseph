@@ -34,14 +34,13 @@ void createTreeFromIndex()
 This method took me genuine hours. I can only say that I hope that it is functional enough for whomever comes after me because I don't think I'll understand it once I wake up. Having said that, it essentially creates a working list from the index and then runs condense() over and over until the working list is a single tree. Note: this works with forward slashes and not backslashes (which I think is correct). It will not work with backslashes.
 
 void condense()
-A method that accesses the working file, finds the blobs and trees that are in the lexicographically first deepest directory and condenses everything inside of it into one tree, before updating the working file accordingly. 
+A method that accesses the working file, finds the blobs and trees that are in the lexicographically first deepest directory and condenses everything inside of it into one tree, before updating the working file accordingly.
 
-*Not in use*
+_Not in use_
 void compressFile(String fileName)
 A method intended to read the contents of a file and produce a compressed version.
 void decompressFile(String fileName)
 A method intended to read the contents of a compressed file and produce a decompressed version.
-
 
 **GitTester.java**
 
@@ -53,7 +52,6 @@ This method deletes all files initialized by Git.initializeRepo(), in addition t
 
 void comprehensiveTest()
 This method runs a comprehensive test of features as of GP-2.4. It first cleans the root of any traces of the old repository. Then, it initializes a new repository and verifies that said repository has been created. Next, it creates five files with varying contents, BLOBs them, and updates the index accordingly. Lastly, it checks to see if this process has been run correctly. Please note that modifying the contents of any of these files will then require that the final testing of the index be changed to reflect the new tests.
-
 
 **GitObject.java**
 A class that was created solely for createTreeFromIndex() and that is probably unnecessary but it is past 2 AM so if this still exists by this morning then it still exists.

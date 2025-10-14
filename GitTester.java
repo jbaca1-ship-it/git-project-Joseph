@@ -6,12 +6,20 @@ import java.nio.file.Paths;
 
 public class GitTester {
     public static void main(String[] args) throws IOException {
-        Git.createTreeFromIndex();
+        // Git.createTreeFromIndex();
         // comprehensiveTest();
         // Git.robustReset();
         // cleanUp();
+        // File texting = new File("fortskibidi/nukes.txt");
+        // texting.createNewFile();
+        // Files.write(Paths.get("fortskibidi/nukes.txt"), "BUidl the sotrm".getBytes(StandardCharsets.UTF_8));
+        // Git.createBLOB("fortskibidi\\the fun will\\n" + //
+        //                 "ever\\end\\yay");
+        // Git.updateIndex("fortskibidi\\the fun will\\n" + //
+        //                 "ever\\end\\yay");
+        Git.createTreeFromIndex();
     }
-    
+
     public static void verifyInitialization() {
         File git = new File("git");
         File obj = new File("git/objects");
