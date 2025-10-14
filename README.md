@@ -1,59 +1,271 @@
-**Git.java**
+# Git Implementation in Java
 
-void initializeRepo()
-This method initializes the Git repository. It creates the following files:
--Directory "git" in the project root
--Directory "objects" in "git"
--File "index" in "git"
--File "HEAD" in "git"
-These files are only created if they do not currently exist.
-In the case that everything necessary for initialization already exists, initializeRepo() will sysout a message stating that the repository already exists.
+A Java implementation of core Git functionality including repository initialization, file hashing, blob creation, index management, and tree operations.
 
-String hashFile(String filePath)
-This method hashes the contents of the file associated with the path provided to it. It then returns the hashed value of these contents as a string. The SHA-1 hash from MessageDigest is employed to execute the hashing. Credit to Alexander Obregon for starter code (https://medium.com/@AlexanderObregon/what-is-sha-256-hashing-in-java-0d46dfb83888).
+## Overview
 
-void createBlob(String fileName)
-This method, given the String name of a file as a parameter, converts it into a BLOB which is stored in git/objects. The name of this BLOB is the hash of the file's contents. The hashing is performed with hashFile(String filePath). If the BLOB already exists, the method will do nothing. If the method has failed to create the BLOB, it will output a message that says so.
+This project provides a simplified but functional implementation of Git's core features in Java. It includes repository management, file versioning, and basic tree operations that mirror the behavior of the real Git version control system.
 
-void updateIndex(String fileName)
-This method, given the String name of a file as a parameter, adds its hash and name to the "index" file located within the "git" directory. It assumes that fileName accurately names an existing file. If no such file exists, it will update "index" with a null BLOB. If the file is already present in its current state, nothing will happen. If the file is in the index but its contents have changed, the index will be changed to reflect this. If the repository has not been initialized, this method will return an error message and not run.
+## Features
 
-void robustReset()
-This method calls the recursive function removeAllContents to delete anything in the project root that is not part of the git project or hidden.
+- **Repository Initialization**: Create and manage Git repositories
+- **File Hashing**: SHA-1 hashing for content identification
+- **Blob Management**: Store file contents as Git objects
+- **Index Management**: Track staged files and changes
+- **Tree Operations**: Create hierarchical directory structures
+- **Comprehensive Testing**: Full test suite with edge case coverage
 
-void removeAllContents(File dir)
-A method that recursively iterates through all directories in the project and deletes all files that are not part of the core project or hidden. Credit to rich and Peter Mortensen for starter code (https://stackoverflow.com/questions/1844688/how-can-i-read-all-files-in-a-folder-from-java).
+## Project Structure
 
-String makeTree(String path)
-A method that, given the path to a directory, makes a tree object for that directory, and recursively makes tree objects for subdirectories and blob objects for files. These tree objects are stored in the project root, and the blobs are stored in git/objects.
+```
+├── Git.java          # Core Git implementation
+├── GitObject.java    # Helper class for tree operations
+├── GitTester.java    # Comprehensive test suite
+└── README.md         # This documentation
+```
 
-String hashString(String str)
-A helper method that hashes the contents of a string using the same method as in hashFile().
+## Quick Start
 
-void createTreeFromIndex()
-This method took me genuine hours. I can only say that I hope that it is functional enough for whomever comes after me because I don't think I'll understand it once I wake up. Having said that, it essentially creates a working list from the index and then runs condense() over and over until the working list is a single tree. Note: this works with forward slashes and not backslashes (which I think is correct). It will not work with backslashes.
+### 1. Initialize a Repository
 
-void condense()
-A method that accesses the working file, finds the blobs and trees that are in the lexicographically first deepest directory and condenses everything inside of it into one tree, before updating the working file accordingly. 
+```java
+// Create a new Git repository
+Git.initializeRepo();
+```
 
-*Not in use*
-void compressFile(String fileName)
-A method intended to read the contents of a file and produce a compressed version.
-void decompressFile(String fileName)
-A method intended to read the contents of a compressed file and produce a decompressed version.
+This creates the following structure:
 
+- `git/` - Repository root directory
+- `git/objects/` - Object storage directory
+- `git/index` - Staging area file
+- `git/HEAD` - Current branch reference
 
-**GitTester.java**
+### 2. Hash Files
 
-void verifyInstallation()
-This method checks to see if the files created by Git.initializeRepo() exists. It outputs a message stating whether or not the repo had been successfully initialized.
+```java
+// Hash a file's contents
+String hash = Git.hashFile("example.txt");
+System.out.println("File hash: " + hash);
+```
 
-void cleanUp()
-This method deletes all files initialized by Git.initializeRepo(), in addition to any BLOBS git/objects contains, and outputs a message that says that it has done so.
+### 3. Create Blobs
 
-void comprehensiveTest()
-This method runs a comprehensive test of features as of GP-2.4. It first cleans the root of any traces of the old repository. Then, it initializes a new repository and verifies that said repository has been created. Next, it creates five files with varying contents, BLOBs them, and updates the index accordingly. Lastly, it checks to see if this process has been run correctly. Please note that modifying the contents of any of these files will then require that the final testing of the index be changed to reflect the new tests.
+```java
+// Store file as Git blob
+Git.createBLOB("example.txt");
+```
 
+### 4. Update Index
 
-**GitObject.java**
-A class that was created solely for createTreeFromIndex() and that is probably unnecessary but it is past 2 AM so if this still exists by this morning then it still exists.
+```java
+// Stage files for commit
+Git.updateIndex("example.txt");
+Git.updateIndex("another-file.txt");
+```
+
+### 5. Create Trees
+
+```java
+// Create tree from directory
+String treeHash = Git.makeTree("src/");
+
+// Create tree from index
+Git.createTreeFromIndex();
+```
+
+## API Reference
+
+### Git Class
+
+#### `void initializeRepo()`
+
+Initializes a new Git repository with the standard directory structure.
+
+**Example:**
+
+```java
+Git.initializeRepo();
+```
+
+#### `String hashFile(String filePath)`
+
+Computes the SHA-1 hash of a file's contents.
+
+**Parameters:**
+
+- `filePath` - Path to the file to hash
+
+**Returns:** SHA-1 hash as a 40-character hexadecimal string, or `null` if file doesn't exist
+
+**Example:**
+
+```java
+String hash = Git.hashFile("document.txt");
+```
+
+#### `void createBLOB(String fileName)`
+
+Creates a Git blob object from a file and stores it in the objects directory.
+
+**Parameters:**
+
+- `fileName` - Path to the file to convert to blob
+
+**Throws:** `IllegalArgumentException` if file doesn't exist or is a directory
+
+**Example:**
+
+```java
+Git.createBLOB("source.java");
+```
+
+#### `void updateIndex(String fileName)`
+
+Adds a file to the Git index (staging area).
+
+**Parameters:**
+
+- `fileName` - Path to the file to stage
+
+**Example:**
+
+```java
+Git.updateIndex("modified-file.txt");
+```
+
+#### `String makeTree(String path)`
+
+Creates a tree object from a directory structure.
+
+**Parameters:**
+
+- `path` - Path to the directory to convert to tree
+
+**Returns:** Hash of the created tree object
+
+**Example:**
+
+```java
+String treeHash = Git.makeTree("src/");
+```
+
+#### `void createTreeFromIndex()`
+
+Creates a tree object from the current index contents.
+
+**Example:**
+
+```java
+Git.createTreeFromIndex();
+```
+
+#### `void robustReset()`
+
+Removes all non-Git files from the project directory.
+
+**Example:**
+
+```java
+Git.robustReset();
+```
+
+### GitObject Class
+
+Helper class used internally for tree operations.
+
+**Fields:**
+
+- `hash` - Object hash
+- `path` - File path
+
+**Methods:**
+
+- `compareTo(GitObject other)` - Compares objects by path
+- `toString()` - Returns formatted string representation
+
+## Testing
+
+The project includes a comprehensive test suite in `GitTester.java` that covers:
+
+- Repository initialization
+- File hashing functionality
+- Blob creation and management
+- Index operations
+- Tree creation
+- Edge cases and error conditions
+- Integration scenarios
+
+### Running Tests
+
+```bash
+javac *.java
+java GitTester
+```
+
+The test suite will:
+
+1. Run all test categories
+2. Display pass/fail results for each test
+3. Provide a summary of test results
+4. Clean up test files automatically
+
+### Test Categories
+
+- **Initialization Tests**: Verify repository creation
+- **Hashing Tests**: Test file hashing with various content types
+- **Blob Tests**: Test blob creation and error handling
+- **Index Tests**: Test staging area functionality
+- **Tree Tests**: Test tree creation and management
+- **Edge Case Tests**: Test special characters, unicode, large files
+- **Integration Tests**: Test complete workflows
+
+## Error Handling
+
+The implementation includes robust error handling:
+
+- **File Not Found**: Methods return `null` or throw appropriate exceptions
+- **Invalid Operations**: Clear error messages for invalid operations
+- **Directory vs File**: Proper validation for blob creation
+- **Repository State**: Validation of repository initialization
+
+## Implementation Details
+
+### Hashing Algorithm
+
+- Uses SHA-1 for content hashing
+- Normalizes line endings (CRLF → LF)
+- Handles UTF-8 encoding properly
+- Removes BOM (Byte Order Mark) if present
+
+### Object Storage
+
+- Blobs stored in `git/objects/` directory
+- Filename is the SHA-1 hash of content
+- Supports both files and directory trees
+
+### Index Format
+
+- Each line contains: `hash path`
+- Automatically updates when files change
+- Maintains relative paths from project root
+
+## Limitations
+
+- No compression (blobs stored as plain text)
+- No network operations
+- No branch management
+- No merge operations
+- Limited to basic Git operations
+
+## Contributing
+
+When contributing to this project:
+
+1. Ensure all tests pass
+2. Add tests for new functionality
+3. Follow existing code style
+4. Update documentation as needed
+
+## License
+
+This project is for educational purposes and demonstrates Git internals implementation in Java.

@@ -70,7 +70,11 @@ public class Git {
     public static void createBLOB(String filePath) {
         String fileName = hashFile(filePath);
         if (fileName == null) {
-            System.err.println("Said file does not exist.");
+            throw new IllegalArgumentException("createBLOB: said file does not exist.");
+        }
+        File dirCheck = new File(filePath);
+        if (dirCheck.isDirectory()) {
+            throw new IllegalArgumentException("createBLOB: cannot accept a directory as argument");
         }
         String path = "git/objects/" + fileName;
         if (!Files.exists(Paths.get(path))) {
@@ -216,7 +220,7 @@ public class Git {
                 contents.append("tree " + makeTree(fPath) + " " + fPath);
             } else {
                 createBLOB(fPath);
-                contents.append("blob " + hashFile(fPath) + " " + fPath);
+                contents.append("blob " + hashFile(fPath) + fPath);
             }
             }
         }
@@ -332,7 +336,7 @@ public class Git {
             String contents = "";
             for (int i = 0; i < longest.size(); i++) {
                 if (longest.get(i).contains(path)) {
-                    contents += longest.get(i) + "\n";
+                    contents += getFinalPath(longest.get(i)) + "\n";
                 }
             }
             // System.out.println(longest);
@@ -375,11 +379,12 @@ public class Git {
     
     private static String getFinalPath(String str) {
         int index = 0;
+        String part1 = str.substring(0, 46);
         for (int i = 0; i < str.length(); i++) {
             if (str.charAt(i) == '\\') {
                 index = i;
             }
         }
-        return str.substring(index + 1);
+        return part1+str.substring(index + 1);
     }
 }
